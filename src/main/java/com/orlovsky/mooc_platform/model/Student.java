@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
+// Will be removed
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

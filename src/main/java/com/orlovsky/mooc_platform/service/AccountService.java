@@ -1,33 +1,21 @@
 package com.orlovsky.mooc_platform.service;
 
-import com.orlovsky.mooc_platform.dto.AuthorDTO;
-import com.orlovsky.mooc_platform.dto.StudentDTO;
-import com.orlovsky.mooc_platform.model.Student;
-import com.orlovsky.mooc_platform.model.Author;
+import com.orlovsky.mooc_platform.dto.UserDTO;
+import com.orlovsky.mooc_platform.dto.UserRegistrationDto;
+import com.orlovsky.mooc_platform.model.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface AccountService {
-    Student signUpStudent(StudentDTO studentDTO);
+public interface AccountService extends UserDetailsService {
+    boolean saveUser(UserRegistrationDto userRegistrationDto);
 
-    Author signUpAuthor(AuthorDTO authorDTO);
+    User findUserById(UUID userId);
 
-    Student getStudentById(UUID studentId);
+    List<User> getAllUsers();
 
-    Author getAuthorById(UUID authorId);
+    void updateUser(UUID UserId, UserDTO userDTO);
 
-    List<Student> getAllStudents();
-
-    List<Author> getAllAuthors();
-
-    void updateStudent(UUID studentId,StudentDTO studentDTO);
-
-    void updateAuthor(UUID authorId, AuthorDTO authorDTO);
-
-    void deleteStudentById(UUID studentId);
-
-    void deleteAuthorById(UUID authorId);
-
-
+    boolean deleteUserById(UUID studentId);
 }

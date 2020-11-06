@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+// Will be removed
 @Repository
 public interface StudentRepository extends JpaRepository<Student, UUID>{
 }
