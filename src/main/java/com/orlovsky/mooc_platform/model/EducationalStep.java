@@ -1,15 +1,11 @@
 package com.orlovsky.mooc_platform.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
+import lombok.*;
 
 import javax.persistence.*;
 import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -18,9 +14,8 @@ import java.util.UUID;
 @Table(name = "educational_steps")
 public class EducationalStep implements Step {
     @Id
-    @Type(type = "pg-uuid")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @JsonBackReference
     @ManyToOne
@@ -35,5 +30,15 @@ public class EducationalStep implements Step {
 
     @OneToMany(mappedBy = "passedEducationalStep",cascade = CascadeType.ALL)
     private List<StudentProgressItem> studentProgressItems;
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof EducationalStep;
+    }
+    public String toString() {
+        return "EducationalStep(id=" + this.getId() + ", courseId=" + this.getCourse().getId() + ", eduMaterialUri=" +
+                this.getEduMaterialUri() + ", position=" + this.getPosition() ;
+    }
+
+
 }
 

@@ -17,15 +17,14 @@ import java.util.UUID;
 public class TestStepOption {
     @Id
     @Column(name = "id",updatable = false, nullable = false)
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column
     private String optionText;
 
     @Column
-    private boolean isCorrect;
+    private Boolean isCorrect;
 
     @JsonBackReference
     @ManyToOne

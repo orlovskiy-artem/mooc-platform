@@ -1,16 +1,22 @@
 package com.orlovsky.mooc_platform.service.impl;
 
-import com.orlovsky.mooc_platform.dto.*;
-import com.orlovsky.mooc_platform.mapper.*;
+import com.orlovsky.mooc_platform.dto.CourseDTO;
+import com.orlovsky.mooc_platform.dto.EducationalStepDTO;
+import com.orlovsky.mooc_platform.dto.TestStepDTO;
+import com.orlovsky.mooc_platform.dto.TestStepOptionRequestDTO;
+import com.orlovsky.mooc_platform.mapper.CourseMapper;
+import com.orlovsky.mooc_platform.mapper.EducationalStepMapper;
+import com.orlovsky.mooc_platform.mapper.TestStepMapper;
+import com.orlovsky.mooc_platform.mapper.TestStepOptionRequestMapper;
 import com.orlovsky.mooc_platform.model.*;
 import com.orlovsky.mooc_platform.repository.*;
 import com.orlovsky.mooc_platform.service.EducationalMaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.MissingResourceException;
-import java.util.UUID;
 
 @Service
 public class EducationalMaterialServiceImpl implements EducationalMaterialService {
@@ -21,12 +27,10 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     @Autowired
     private TestStepRepository testStepRepository;
     @Autowired
-    private AuthorRepository authorRepository;
+    private UserRepository userRepository;
     @Autowired
     private TestStepOptionRepository testAnswerRepository;
 
-//    @Autowired
-//    private  authorRepository;
 
     // CRUD
     // Create
@@ -34,13 +38,12 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     public Course createEmptyCourse(CourseDTO courseDTO) {
         Course course = CourseMapper.INSTANCE.toEntity(courseDTO);
         course.setStatus(CourseStatus.IN_DEVELOPMENT);
-        System.out.println(course);
         return courseRepository.save(course);
     }
 
     // Read
     @Override
-    public Course getCourseById(UUID courseId) throws MissingResourceException{
+    public Course getCourseById(Long courseId) throws MissingResourceException{
         return courseRepository.findById(courseId)
                 .orElseThrow(() ->
                         new MissingResourceException("Course not found",
@@ -48,7 +51,7 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     }
 
     @Override
-    public TestStep getTestStepById(UUID testStepId) throws MissingResourceException {
+    public TestStep getTestStepById(Long testStepId) throws MissingResourceException {
         return testStepRepository.findById(testStepId)
                 .orElseThrow(()->
                     new MissingResourceException("Test step not found",
@@ -57,13 +60,19 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     }
 
     @Override
-    public EducationalStep getEducationalStepById(UUID educationalStepId) throws MissingResourceException {
+    public EducationalStep getEducationalStepById(Long educationalStepId) throws MissingResourceException {
         return educationalStepRepository.findById(educationalStepId)
                 .orElseThrow(() ->
                         new MissingResourceException("Educational step not found",
                                 "EducationalStep",
                                 educationalStepId.toString()));
     }
+
+    @Override
+    public Collection<Course> getAuthorCourses(List<User> authors) {
+        return courseRepository.findCourseByAuthor(authors.get(0).getId());
+    }
+
 
     @Override
     public List<Course> getAllCourses() {
@@ -73,7 +82,7 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
 
     // Update
     @Override
-    public void updateCourseInfo(UUID courseId,CourseDTO courseDTO) throws MissingResourceException{
+    public void updateCourseInfo(Long courseId,CourseDTO courseDTO) throws MissingResourceException{
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
                     "Course",
@@ -91,7 +100,7 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     }
 
     @Override
-    public void activateCourse(UUID courseId) throws MissingResourceException {
+    public void activateCourse(Long courseId) throws MissingResourceException {
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
                     "Course",
@@ -103,7 +112,7 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     }
 
     @Override
-    public void deactivateCourse(UUID courseId) throws MissingResourceException {
+    public void deactivateCourse(Long courseId) throws MissingResourceException {
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
                     "Course",
@@ -115,7 +124,7 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     }
 
     @Override
-    public void setCourseStatus(UUID courseId, CourseStatus courseStatus) throws MissingResourceException {
+    public void setCourseStatus(Long courseId, CourseStatus courseStatus) throws MissingResourceException {
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
                     "Course",
@@ -126,7 +135,7 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     }
 
     @Override
-    public EducationalStep addEducationalStep(UUID courseId, EducationalStepDTO educationalStepDTO) {
+    public EducationalStep addEducationalStep(Long courseId, EducationalStepDTO educationalStepDTO) {
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
                     "Course",
@@ -145,7 +154,7 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     }
 
     @Override
-    public TestStep addTestStep(UUID courseId,
+    public TestStep addTestStep(Long courseId,
                             TestStepDTO testStepDTO) {
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
@@ -164,13 +173,16 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
         return testStepSaved;
     }
     @Override
-    public TestStepOption addTestStepOption(UUID courseId,
-                                            UUID testStepId,
+    public TestStepOption addTestStepOption(Long courseId,
+                                            Long testStepId,
                                             TestStepOptionRequestDTO testStepOptionRequestDTO) throws MissingResourceException{
         if(!testStepRepository.existsById(testStepId)){
             throw new MissingResourceException("Test step not found",
                     "Test step",
                     testStepId.toString());
+        }
+        if(testStepOptionRequestDTO.getIsCorrect()==null){
+            testStepOptionRequestDTO.setCorrect(false);
         }
         TestStep testStep = testStepRepository.getOne(testStepId);
         TestStepOption testStepOption = TestStepOptionRequestMapper.INSTANCE.toEntity(testStepOptionRequestDTO);
@@ -180,35 +192,34 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
         testStepRepository.save(testStep);
         return testStepOptionSaved;
     }
-
+//    TODO
     @Override
-    public void addAuthor(UUID courseId, UUID authorId) {
+    public void addAuthor(Long courseId, Long authorId) {
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
                     "Course",
                     courseId.toString());
         }
-        // Will be done by responses in Lab A3 - microservices
-        if(!authorRepository.existsById(authorId)){
+        if(!userRepository.existsById(authorId)){
             throw new MissingResourceException("Author not found",
                     "Author",
                     authorId.toString());
         }
         Course course = courseRepository.getOne(courseId);
-        Author author = authorRepository.getOne(authorId);
+        User author = userRepository.getOne(authorId);
         course.getAuthors().add(author);
         courseRepository.save(course);
     }
 
     // Delete
     @Override
-    public void deleteCourse(UUID courseId) {
+    public void deleteCourse(Long courseId) {
         courseRepository.deleteById(courseId);
     }
 
     @Override
-    public void deleteTestStep(UUID courseId,
-                               UUID testStepId) throws MissingResourceException{
+    public void deleteTestStep(Long courseId,
+                               Long testStepId) throws MissingResourceException{
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
                     "Course",
@@ -226,7 +237,7 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     }
 
     @Override
-    public void deleteTestAnswer(UUID testStepId, UUID testAnswerId)
+    public void deleteTestAnswer(Long testStepId, Long testAnswerId)
             throws MissingResourceException {
         if(!testStepRepository.existsById(testStepId)){
             throw new MissingResourceException("Test step not found",
@@ -243,29 +254,29 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
         testStep.getAnswers().remove(testAnswer);
         testAnswerRepository.delete(testAnswer);
     }
-
+//    TODO
     @Override
-    public void deleteAuthorById(UUID courseId, UUID authorId) throws MissingResourceException {
+    public void deleteAuthorById(Long courseId, Long authorId) throws MissingResourceException {
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
                     "Course",
                     courseId.toString());
         }
-        if(!authorRepository.existsById(authorId)){
+        if(!userRepository.existsById(authorId)){
             throw new MissingResourceException("Author not found",
                     "Author",
                     authorId.toString());
         }
         Course course = courseRepository.getOne(courseId);
-        Author author = authorRepository.getOne(authorId);
+        User author = userRepository.getOne(authorId);
         course.getAuthors().remove(author);
-        authorRepository.deleteById(authorId);
+        userRepository.deleteById(authorId);
         courseRepository.save(course);
     }
 
     @Override
-    public void deleteEducationalStep(UUID courseId,
-                                      UUID educationalStepId) throws MissingResourceException {
+    public void deleteEducationalStep(Long courseId,
+                                      Long educationalStepId) throws MissingResourceException {
         if(!courseRepository.existsById(courseId)){
             throw new MissingResourceException("Course not found",
                     "Course",
@@ -280,7 +291,13 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
         course.setNumberOfSteps(course.getNumberOfSteps()-1);
         courseRepository.save(course);
         educationalStepRepository.deleteById(educationalStepId);
+    }
 
-
+    @Override
+    public List<Course> searchCoursesByKeyword(String keyword) {
+        if (keyword != null) {
+            return courseRepository.search(keyword);
+        }
+        return courseRepository.findAll();
     }
 }

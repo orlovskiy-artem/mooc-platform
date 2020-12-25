@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="ISO-8859-1">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <title>Cerebrum</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+          crossorigin="anonymous">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+</head>
+<body>
+<!-- jQuery and JS bundle w/ Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+<div th:insert="header :: header"></div>
+<style>
+    #main-container {
+        padding-top:7%;
+    }
+</style>
+<div class="container" id="main-container">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <main role="main">
+                <form sec:authorize="hasAnyRole('ADMIN','AUTHOR')"
+                      th:action="@{'/teach/courses/' + ${course.getId()} + '/add_test_step'}"
+                      method="post" th:object="${testStep}">
+                    <div class="form-group">
+                        <label class="control-label" for="description"> Description  </label>
+                        <input id="description" class="form-control" th:field="*{description}"
+                               required autofocus="autofocus" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="score"> Score </label> <input
+                            id="score" class="form-control" th:field="*{score}"
+                            required autofocus="autofocus" />
+                    </div>
+                    <div id="container"></div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">Create test step</button>
+                    </div>
+                </form>
+            </main>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

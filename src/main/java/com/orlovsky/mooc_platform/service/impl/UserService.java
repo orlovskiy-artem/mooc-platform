@@ -2,50 +2,59 @@ package com.orlovsky.mooc_platform.service.impl;
 
 
 import com.orlovsky.mooc_platform.dto.UserDTO;
+import com.orlovsky.mooc_platform.dto.UserEditRoleDTO;
 import com.orlovsky.mooc_platform.dto.UserRegistrationDto;
+import com.orlovsky.mooc_platform.exceptions.UserAlreadyExistException;
 import com.orlovsky.mooc_platform.mapper.UserMapper;
 import com.orlovsky.mooc_platform.model.Role;
 import com.orlovsky.mooc_platform.model.User;
 import com.orlovsky.mooc_platform.repository.RoleRepository;
 import com.orlovsky.mooc_platform.repository.UserRepository;
 import com.orlovsky.mooc_platform.service.AccountService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.text.MessageFormat;
+import java.util.*;
 
 @Service
+@Transactional
 public class UserService implements AccountService {
+    @Autowired
+    UserRepository userRepository;
     @PersistenceContext
     private EntityManager em;
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     RoleRepository roleRepository;
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Username is an email.
+        final Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            System.out.println(optionalUser.get());
+            return optionalUser.get();
         }
-        return user;
+        else {
+            throw new UsernameNotFoundException(MessageFormat.format("User with email {0} cannot be found.", email));
+        }
     }
 
     @Override
-    public User findUserById(UUID userId) {
+    public User findUserById(Long userId) throws NotFoundException {
         Optional<User> userFromDb = userRepository.findById(userId);
-        return userFromDb.orElse(new User());
+        if( ! userFromDb.isPresent()){
+            throw new NotFoundException("User not found");
+        }
+        return userFromDb.get();
     }
 
     @Override
@@ -53,30 +62,72 @@ public class UserService implements AccountService {
         return userRepository.findAll();
     }
 
-    public boolean saveUser(UserRegistrationDto userRegistrationDto) {
-        User userFromDB = userRepository.findByUsername(userRegistrationDto.getUsername());
-        if (userFromDB != null) {
-            return false;
+    @Override
+    public User saveUser(UserRegistrationDto userRegistrationDto) throws UserAlreadyExistException {
+        Optional<User> userFromDB = userRepository.findByEmail(userRegistrationDto.getEmail());
+        if (userFromDB.isPresent()) {
+            throw new UserAlreadyExistException("User already exists for this email");
         }
-        System.out.println(userRegistrationDto.toString());
         User user = UserMapper.INSTANCE.toEntity(userRegistrationDto);
 
-        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
+        user.setRoles(new HashSet<>(Arrays.asList(roleRepository.findByName("USER"))));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setEnabled(true);
         userRepository.save(user);
-        return true;
+        return user;
     }
 
     @Override
-    public void updateUser(UUID UserId, UserDTO userDTO) {}
+    public void updateUser(Long userId, UserDTO userDTO) throws NotFoundException{
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " +
+                                    userId.toString()+" not found"));
+        user.setEmail(userDTO.getEmail());
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setDescription(userDTO.getDescription());
+        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+        userRepository.saveAndFlush(user);
+    }
 
     @Override
-    public boolean deleteUserById(UUID userId) {
-        if (userRepository.findById(userId).isPresent()) {
-            userRepository.deleteById(userId);
-            return true;
+    public void updateRoles(Long userId, UserEditRoleDTO editRoleDTO) throws NotFoundException {
+        List<Role> roles = new ArrayList<>();
+        if(!(editRoleDTO.getIsUser()==null) && editRoleDTO.getIsUser()){
+            roles.add(roleRepository.findByName("USER"));
         }
-        return false;
+        if(!(editRoleDTO.getIsAuthor()==null) && editRoleDTO.getIsAuthor()){
+            roles.add(roleRepository.findByName("AUTHOR"));
+        }
+        if(!(editRoleDTO.getIsAdmin()==null) && editRoleDTO.getIsAdmin()){
+            roles.add(roleRepository.findByName("ADMIN"));
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " +
+                userId.toString()+" not found"));
+        for (Role role:user.getRoles()) {
+            if(!roles.contains(role)){
+                role.getUsers().remove(user);
+            }
+        }
+        user.setRoles(new HashSet<>(roles));
+
+        userRepository.saveAndFlush(user);
     }
+
+
+    @Override
+    public Boolean checkRole(Long userId, String role) throws NotFoundException{
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " +
+                        userId.toString()+" not found"));
+        return user.getRoles().contains(roleRepository.findByName(role));
+    }
+
+    @Override
+    public void deleteUserById(Long userId) {
+        userRepository.deleteById(userId);
+    }
+
 }
 

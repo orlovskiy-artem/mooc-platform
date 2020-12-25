@@ -1,7 +1,8 @@
 package com.orlovsky.mooc_platform.mapper;
 
 import com.orlovsky.mooc_platform.dto.TestStepDTO;
-import com.orlovsky.mooc_platform.dto.TestStepOptionDTO;
+import com.orlovsky.mooc_platform.dto.TestStepDTO.TestStepDTOBuilder;
+import com.orlovsky.mooc_platform.dto.TestStepOptionRequestDTO;
 import com.orlovsky.mooc_platform.model.TestStep;
 import com.orlovsky.mooc_platform.model.TestStepOption;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2020-11-06T20:19:18+0200",
+    date = "2020-12-21T05:27:47+0200",
     comments = "version: 1.3.1.Final, compiler: javac, environment: Java 11.0.6 (JetBrains s.r.o)"
 )
 public class TestStepMapperImpl implements TestStepMapper {
@@ -22,15 +23,15 @@ public class TestStepMapperImpl implements TestStepMapper {
             return null;
         }
 
-        TestStepDTO testStepDTO = new TestStepDTO();
+        TestStepDTOBuilder testStepDTO = TestStepDTO.builder();
 
-        testStepDTO.setAnswers( testStepOptionCollectionToTestStepOptionDTOCollection( testStep.getAnswers() ) );
-        testStepDTO.setScore( testStep.getScore() );
-        testStepDTO.setDescriptionUri( testStep.getDescriptionUri() );
-        testStepDTO.setPosition( testStep.getPosition() );
-        testStepDTO.setId( testStep.getId() );
+        testStepDTO.answers( testStepOptionListToTestStepOptionRequestDTOList( testStep.getAnswers() ) );
+        testStepDTO.score( testStep.getScore() );
+        testStepDTO.description( testStep.getDescription() );
+        testStepDTO.position( testStep.getPosition() );
+        testStepDTO.id( testStep.getId() );
 
-        return testStepDTO;
+        return testStepDTO.build();
     }
 
     @Override
@@ -41,9 +42,9 @@ public class TestStepMapperImpl implements TestStepMapper {
 
         TestStep testStep = new TestStep();
 
-        testStep.setAnswers( testStepOptionDTOCollectionToTestStepOptionCollection( testStepDTO.getAnswers() ) );
+        testStep.setAnswers( testStepOptionRequestDTOListToTestStepOptionList( testStepDTO.getAnswers() ) );
         testStep.setScore( testStepDTO.getScore() );
-        testStep.setDescriptionUri( testStepDTO.getDescriptionUri() );
+        testStep.setDescription( testStepDTO.getDescription() );
         testStep.setPosition( testStepDTO.getPosition() );
         testStep.setId( testStepDTO.getId() );
 
@@ -78,55 +79,57 @@ public class TestStepMapperImpl implements TestStepMapper {
         return list;
     }
 
-    protected TestStepOptionDTO testStepOptionToTestStepOptionDTO(TestStepOption testStepOption) {
+    protected TestStepOptionRequestDTO testStepOptionToTestStepOptionRequestDTO(TestStepOption testStepOption) {
         if ( testStepOption == null ) {
             return null;
         }
 
-        TestStepOptionDTO testStepOptionDTO = new TestStepOptionDTO();
+        TestStepOptionRequestDTO testStepOptionRequestDTO = new TestStepOptionRequestDTO();
 
-        testStepOptionDTO.setId( testStepOption.getId() );
-        testStepOptionDTO.setOptionText( testStepOption.getOptionText() );
+        testStepOptionRequestDTO.setId( testStepOption.getId() );
+        testStepOptionRequestDTO.setOptionText( testStepOption.getOptionText() );
+        testStepOptionRequestDTO.setIsCorrect( testStepOption.getIsCorrect() );
 
-        return testStepOptionDTO;
+        return testStepOptionRequestDTO;
     }
 
-    protected Collection<TestStepOptionDTO> testStepOptionCollectionToTestStepOptionDTOCollection(Collection<TestStepOption> collection) {
-        if ( collection == null ) {
+    protected List<TestStepOptionRequestDTO> testStepOptionListToTestStepOptionRequestDTOList(List<TestStepOption> list) {
+        if ( list == null ) {
             return null;
         }
 
-        Collection<TestStepOptionDTO> collection1 = new ArrayList<TestStepOptionDTO>( collection.size() );
-        for ( TestStepOption testStepOption : collection ) {
-            collection1.add( testStepOptionToTestStepOptionDTO( testStepOption ) );
+        List<TestStepOptionRequestDTO> list1 = new ArrayList<TestStepOptionRequestDTO>( list.size() );
+        for ( TestStepOption testStepOption : list ) {
+            list1.add( testStepOptionToTestStepOptionRequestDTO( testStepOption ) );
         }
 
-        return collection1;
+        return list1;
     }
 
-    protected TestStepOption testStepOptionDTOToTestStepOption(TestStepOptionDTO testStepOptionDTO) {
-        if ( testStepOptionDTO == null ) {
+    protected TestStepOption testStepOptionRequestDTOToTestStepOption(TestStepOptionRequestDTO testStepOptionRequestDTO) {
+        if ( testStepOptionRequestDTO == null ) {
             return null;
         }
 
         TestStepOption testStepOption = new TestStepOption();
 
-        testStepOption.setId( testStepOptionDTO.getId() );
-        testStepOption.setOptionText( testStepOptionDTO.getOptionText() );
+        testStepOption.setId( testStepOptionRequestDTO.getId() );
+        testStepOption.setOptionText( testStepOptionRequestDTO.getOptionText() );
+        testStepOption.setIsCorrect( testStepOptionRequestDTO.getIsCorrect() );
 
         return testStepOption;
     }
 
-    protected Collection<TestStepOption> testStepOptionDTOCollectionToTestStepOptionCollection(Collection<TestStepOptionDTO> collection) {
-        if ( collection == null ) {
+    protected List<TestStepOption> testStepOptionRequestDTOListToTestStepOptionList(List<TestStepOptionRequestDTO> list) {
+        if ( list == null ) {
             return null;
         }
 
-        Collection<TestStepOption> collection1 = new ArrayList<TestStepOption>( collection.size() );
-        for ( TestStepOptionDTO testStepOptionDTO : collection ) {
-            collection1.add( testStepOptionDTOToTestStepOption( testStepOptionDTO ) );
+        List<TestStepOption> list1 = new ArrayList<TestStepOption>( list.size() );
+        for ( TestStepOptionRequestDTO testStepOptionRequestDTO : list ) {
+            list1.add( testStepOptionRequestDTOToTestStepOption( testStepOptionRequestDTO ) );
         }
 
-        return collection1;
+        return list1;
     }
 }

@@ -13,13 +13,13 @@ import java.util.List;
 public interface TestStepMapper {
     TestStepMapper INSTANCE = Mappers.getMapper(TestStepMapper.class);
 
-    @Mapping(source = "descriptionUri",target = "descriptionUri")
+    @Mapping(source = "description",target = "description")
     @Mapping(source = "answers",target = "answers")
     @Mapping(source = "score",target = "score")
     @Mapping(source = "position",target = "position")
     TestStepDTO toDto(TestStep testStep);
 
-    @Mapping(source = "descriptionUri",target = "descriptionUri")
+    @Mapping(source = "description",target = "description")
     @Mapping(source = "answers",target = "answers")
     @Mapping(source = "score",target = "score")
     @Mapping(source = "position",target = "position")

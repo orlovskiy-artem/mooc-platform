@@ -15,12 +15,12 @@ public interface TestStepOptionRequestMapper {
 
     @Mapping(source = "id",target = "id")
     @Mapping(source = "optionText",target = "optionText")
-    @Mapping(source = "correct",target = "correct")
+    @Mapping(source = "isCorrect",target = "isCorrect")
     TestStepOptionRequestDTO toDto(TestStepOption testStepOption);
 
     @Mapping(source = "id",target = "id")
     @Mapping(source = "optionText",target = "optionText")
-    @Mapping(source = "correct",target = "correct")
+    @Mapping(source = "isCorrect",target = "isCorrect")
     TestStepOption toEntity(TestStepOptionRequestDTO testStepOptionRequestDTO);
 
     Collection<TestStepOption> toEntities(List<TestStepOptionRequestDTO> testStepOptionDTOs);

@@ -1,12 +1,15 @@
 package com.orlovsky.mooc_platform.service;
 
 
-import com.orlovsky.mooc_platform.dto.*;
+import com.orlovsky.mooc_platform.dto.CourseDTO;
+import com.orlovsky.mooc_platform.dto.EducationalStepDTO;
+import com.orlovsky.mooc_platform.dto.TestStepDTO;
+import com.orlovsky.mooc_platform.dto.TestStepOptionRequestDTO;
 import com.orlovsky.mooc_platform.model.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.MissingResourceException;
-import java.util.UUID;
 
 public interface EducationalMaterialService {
     // CRUD
@@ -14,44 +17,48 @@ public interface EducationalMaterialService {
     Course createEmptyCourse(CourseDTO courseDTO);
 
     // Read
-    Course getCourseById(UUID courseId);
+    Course getCourseById(Long courseId);
 
     List<Course> getAllCourses();
 
-    TestStep getTestStepById(UUID testStepId);
+    TestStep getTestStepById(Long testStepId);
 
-    EducationalStep getEducationalStepById(UUID educationalStepId) throws MissingResourceException;
+    EducationalStep getEducationalStepById(Long educationalStepId) throws MissingResourceException;
+
+    Collection<Course> getAuthorCourses(List<User> authors);
 
     // Update
-    void updateCourseInfo(UUID courseId,
+    void updateCourseInfo(Long courseId,
                           CourseDTO courseDTO);
 
-    void addAuthor(UUID courseId, UUID authorId);
+    void addAuthor(Long courseId, Long authorId);
 
-    EducationalStep addEducationalStep(UUID courseId,
+    EducationalStep addEducationalStep(Long courseId,
                             EducationalStepDTO educationalStepDTO);
 
-    TestStep addTestStep(UUID courseId,
+    TestStep addTestStep(Long courseId,
                      TestStepDTO testStepDTO);
 
-    TestStepOption addTestStepOption(UUID courseId, UUID testStepId, TestStepOptionRequestDTO body);
+    TestStepOption addTestStepOption(Long courseId, Long testStepId, TestStepOptionRequestDTO body);
 
-    void setCourseStatus(UUID courseId, CourseStatus courseStatus);
+    void setCourseStatus(Long courseId, CourseStatus courseStatus);
 
-    void activateCourse(UUID courseId);
+    void activateCourse(Long courseId);
 
-    void deactivateCourse(UUID courseId);
+    void deactivateCourse(Long courseId);
 
     // Delete
-    void deleteEducationalStep(UUID courseId,
-                               UUID educationalStepId);
+    void deleteEducationalStep(Long courseId,
+                               Long educationalStepId);
 
-    void deleteTestStep(UUID courseId,
-                        UUID testStepId);
+    void deleteTestStep(Long courseId,
+                        Long testStepId);
 
-    void deleteTestAnswer(UUID testStepId, UUID testAnswerId);
+    void deleteTestAnswer(Long testStepId, Long testAnswerId);
 
-    void deleteAuthorById(UUID courseId, UUID authorId);
+    void deleteAuthorById(Long courseId, Long authorId);
 
-    void deleteCourse(UUID courseId);
+    void deleteCourse(Long courseId);
+
+    List<Course> searchCoursesByKeyword(String keyword);
 }

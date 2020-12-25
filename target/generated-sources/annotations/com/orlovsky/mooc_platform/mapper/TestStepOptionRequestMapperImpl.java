@@ -9,7 +9,7 @@ import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2020-11-06T20:19:18+0200",
+    date = "2020-12-21T05:27:47+0200",
     comments = "version: 1.3.1.Final, compiler: javac, environment: Java 11.0.6 (JetBrains s.r.o)"
 )
 public class TestStepOptionRequestMapperImpl implements TestStepOptionRequestMapper {
@@ -23,8 +23,8 @@ public class TestStepOptionRequestMapperImpl implements TestStepOptionRequestMap
         TestStepOptionRequestDTO testStepOptionRequestDTO = new TestStepOptionRequestDTO();
 
         testStepOptionRequestDTO.setId( testStepOption.getId() );
-        testStepOptionRequestDTO.setCorrect( testStepOption.isCorrect() );
         testStepOptionRequestDTO.setOptionText( testStepOption.getOptionText() );
+        testStepOptionRequestDTO.setIsCorrect( testStepOption.getIsCorrect() );
 
         return testStepOptionRequestDTO;
     }
@@ -38,8 +38,8 @@ public class TestStepOptionRequestMapperImpl implements TestStepOptionRequestMap
         TestStepOption testStepOption = new TestStepOption();
 
         testStepOption.setId( testStepOptionRequestDTO.getId() );
-        testStepOption.setCorrect( testStepOptionRequestDTO.isCorrect() );
         testStepOption.setOptionText( testStepOptionRequestDTO.getOptionText() );
+        testStepOption.setIsCorrect( testStepOptionRequestDTO.getIsCorrect() );
 
         return testStepOption;
     }

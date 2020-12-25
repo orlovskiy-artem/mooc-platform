@@ -1,17 +1,19 @@
 package com.orlovsky.mooc_platform.mapper;
 
 import com.orlovsky.mooc_platform.dto.CourseDTO;
-import com.orlovsky.mooc_platform.model.Author;
 import com.orlovsky.mooc_platform.model.Course;
 import com.orlovsky.mooc_platform.model.EducationalStep;
 import com.orlovsky.mooc_platform.model.TestStep;
+import com.orlovsky.mooc_platform.model.User;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2020-11-06T20:19:18+0200",
+    date = "2020-12-21T05:27:47+0200",
     comments = "version: 1.3.1.Final, compiler: javac, environment: Java 11.0.6 (JetBrains s.r.o)"
 )
 public class CourseMapperImpl implements CourseMapper {
@@ -36,9 +38,9 @@ public class CourseMapperImpl implements CourseMapper {
             courseDTO.setTestSteps( new ArrayList<TestStep>( list1 ) );
         }
         courseDTO.setTitle( course.getTitle() );
-        List<Author> list2 = course.getAuthors();
-        if ( list2 != null ) {
-            courseDTO.setAuthors( new ArrayList<Author>( list2 ) );
+        Set<User> set = course.getAuthors();
+        if ( set != null ) {
+            courseDTO.setAuthors( new ArrayList<User>( set ) );
         }
         courseDTO.setStatus( course.getStatus() );
         courseDTO.setId( course.getId() );
@@ -67,9 +69,9 @@ public class CourseMapperImpl implements CourseMapper {
             course.setTestSteps( new ArrayList<TestStep>( list1 ) );
         }
         course.setTitle( courseDTO.getTitle() );
-        List<Author> list2 = courseDTO.getAuthors();
+        List<User> list2 = courseDTO.getAuthors();
         if ( list2 != null ) {
-            course.setAuthors( new ArrayList<Author>( list2 ) );
+            course.setAuthors( new HashSet<User>( list2 ) );
         }
         course.setStatus( courseDTO.getStatus() );
         course.setId( courseDTO.getId() );

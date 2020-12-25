@@ -9,7 +9,7 @@ import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2020-11-06T20:19:18+0200",
+    date = "2020-12-21T05:27:47+0200",
     comments = "version: 1.3.1.Final, compiler: javac, environment: Java 11.0.6 (JetBrains s.r.o)"
 )
 public class EducationalStepMapperImpl implements EducationalStepMapper {

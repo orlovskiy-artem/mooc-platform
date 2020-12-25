@@ -15,22 +15,23 @@ public interface UserMapper {
 
     @Mapping(source = "firstName", target = "firstName")
     @Mapping(source = "lastName", target = "lastName")
-    @Mapping(source = "username", target = "username")
     @Mapping(source = "description", target = "description")
     @Mapping(source = "email", target = "email")
+    @Mapping(source = "roles", target = "roles")
+    @Mapping(source = "id", target = "id")
     UserDTO toDto(User user);
 
     @Mapping(source = "firstName", target = "firstName")
     @Mapping(source = "lastName", target = "lastName")
-    @Mapping(source = "username", target = "username")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "password", target = "password")
+    @Mapping(source = "matchingPassword", target = "passwordConfirm")
     @Mapping(source = "description", target = "description")
+    @Mapping(source = "id", target = "id")
     User toEntity(UserDTO userDTO);
 
     @Mapping(source = "firstName", target = "firstName")
     @Mapping(source = "lastName", target = "lastName")
-    @Mapping(source = "username", target = "username")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "password", target = "password")
     User toEntity(UserRegistrationDto userRegistrationDto);

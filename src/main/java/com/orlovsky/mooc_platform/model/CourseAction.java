@@ -4,14 +4,14 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class CourseAction {
-    private final UUID courseId;
-    private final UUID studentId;
+    private final Long courseId;
+    private final Long studentId;
     private final ActionType actionType;
     private final ZonedDateTime actionTime;
     private final Integer score;
 
-    public CourseAction(UUID courseId,
-                        UUID studentId,
+    public CourseAction(Long courseId,
+                        Long studentId,
                         ActionType actionType,
                         ZonedDateTime actionTime,
                         Integer score) {
@@ -22,7 +22,7 @@ public class CourseAction {
         this.score = score;
     }
 
-    public UUID getCourseId() {
+    public Long getCourseId() {
         return courseId;
     }
 
@@ -30,7 +30,7 @@ public class CourseAction {
         return score;
     }
 
-    public UUID getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 

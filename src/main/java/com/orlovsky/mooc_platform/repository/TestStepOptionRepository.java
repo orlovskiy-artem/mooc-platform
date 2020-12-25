@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface TestStepOptionRepository extends JpaRepository<TestStepOption, UUID> {
+public interface TestStepOptionRepository extends JpaRepository<TestStepOption, Long> {
 }

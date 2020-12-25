@@ -5,14 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.net.URI;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class EducationalStepDTO {
-    private UUID id;
-    private UUID courseId;
+    private Long id;
+    private Long courseId;
     private URI eduMaterialUri;
     private int position;
 }
